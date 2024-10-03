@@ -1,179 +1,147 @@
-#include<iostream>
-#include<string>
+
+#include <iostream>
+#include <vector>
+#include<stack>
 using namespace std;
-    // template <typename T>
-    // class Stack {
-    //     T* arr;
-    //     int size;
-    //     int top;
 
-    // public:
-    //     // Constructor
-    //     Stack(int size) {
-    //         this->size = size;
-    //         arr = new T[size];  
-    //         top = -1; 
-    //     }
+// Implementing The Stack Class
 
-    //     ~Stack() {
-    //         delete[] arr;
-    //     }
-
-    //     bool isEmpty() {
-    //         return top == -1;
-    //     }
-
-    //     bool isFull() {
-    //         return top == size - 1;
-    //     }
-
-    //     void push(T element) {
-    //         if (isFull()) {
-    //             cout << "Stack Overflow" << endl;
-    //         } else {
-    //             arr[++top] = element;  
-    //         }
-    //     }
-
-    //     void pop() {
-    //         if (isEmpty()) {
-    //             cout << "Stack is empty" << endl;
-    //         } else {
-    //             --top;  
-    //         }
-    //     }
-
-    //     T getTop() {
-    //         if (isEmpty()) {
-    //             cout << "Stack is empty" << endl;
-    //             return T();  
-    //         } else {
-    //             return arr[top];
-    //         }
-    //     }
-    // };
-
-// Stacks Implementation Using Arrays
-template < class T > 
+// Implement an advanced stack that, along with the standard push() and pop() operations, supports:
+// getMin(): Returns the minimum element in the stack in constant time.
+// size(): Returns the number of elements in the stack.
+// Requirements:
+// The getMin() operation should work in O(1) time.
+//You are not allowed to use any additional data structures like arrays or lists, except for the stack itself.
+template< class T>
 class Stack{
-    public:
-    // Properties
-    T* arr;
-    int top;
-    int size;
-    int data;
+public:
 
+// properties 
+T* arr;
+int size;
+int top;
 
-    // Constructor 
-    public:
-    Stack(int size){
-        top = -1;
-        arr = new T[size];
-        this->data = data;
-    }
-
-//  All Stack Functions 
-bool isEmpty(){
-    if(top == -1){
-        // Means Empty
-        return true;
-    }
-    else{
-
-        return false;
-    }
+// Constructor 
+public:
+Stack(int size){
+    this -> size = size;
+    arr = new int[size];
+    this->top =  -1;
 
 }
+// functions
+// is Empty
 
-bool isFull(){
-
-    if(top == size -1 ){
+bool isEmpty(){
+    if(top == -1){
         return true;
-        
     }
     else {
         return false;
     }
 
 }
+// is full
 
-
-// Push and Pop Functions 
-
-void Push(T element){
-
-// Base Case stack is full 
-
-if(top == size - 1 ){
-
-    cout << "Stack Overfull" <<endl;
+bool isFull(){
+    if(top == size -1){
+        return true;
+    }
+    else[
+        return false;
+    ]
 }
+// 
 
-// else if ( size - top > 1){
-
-//     top++;
-//     arr[top] = element;
-// }
-
-else{
-
+void push(T element){
+if(top == size - 1){
+    cout<<"Stack Overflow "<<endl;
+    
+}
+else {
     top++;
     arr[top] = element;
 }
-
 }
 
-void pop() {
-    
-    if (top == -1) {
-        cout << "Stack Underflow" << endl;
-    } else {
-       
+// Pop element
+void pop(){
+    if(top == -1){
+        
+        cout << "Stack Underflow " << endl;
+    }
+    else{
+
         top--;
     }
+
+
 }
-
-
-
-
-
 
 };
-template<class T>
-int getSize(stack<T>s){
-// base case
-int count = 0;
-if(s.empty()){
 
+// Size function to Get The Size
+
+int getSize(stack<int>&s){
+
+    int count = 0;
+    while(!s.empty()){
+
+        count++;
+        s.pop();
+    }
+
+    return count;
+}
+// Minimum Function  0(1)
+
+
+
+// Bonus Taskkkkkk
+
+vector<int> getGreaterElement(vector<int>& arr) {
+    stack<int> s;
+    vector<int> ans(arr.size());
+    int current;
+
+    for(int i = arr.size() - 1 ; i>= 0 ; i--)
+    {
+
+        current = arr[i];
+        while(!s.empty() && s.top()  <= current)
+        {
+            s.pop();
+        }
+        if(s.empty()){
+            ans[i] = -1;
+        }
+        // We have the greater
+        // You have the Element
+        else{
+        ans[i] = s.top();
+        }
+        s.push(current);
+
+    }
+
+
+    return ans;
+}
+
+int main()
+{
+   
+  vector<int> arr;
+    arr.push_back(4);
+    arr.push_back(5);
+    arr.push_back(2);
+    arr.push_back(25);
+
+    vector<int> res = getGreaterElement(arr);
+    cout << "The stack is" <<endl;
+    for (int i = 0; i < res.size(); i++) {
+        cout << res[i] << " ";
+    }
+    cout << endl;
     return 0;
 }
-while(!(s.empty())){
-
-    count++;
-    s.pop();
-}
-return count;
-}
-
-
-
-
-
-
-int main(){
-
-
-stack<int> s;
-// s.push(1);
-// s.push(1);
-// s.push(1);
-// s.push(1);
-
-int answer = getSize(s);
-cout<<answer;
-
-
-
-
-    return 0;
-}   
