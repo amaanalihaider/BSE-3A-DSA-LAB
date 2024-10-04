@@ -1,7 +1,6 @@
-
 #include <iostream>
 #include <vector>
-
+#include <stack>
 using namespace std;
 
 // Implementing The Stack Class
@@ -11,177 +10,145 @@ using namespace std;
 // size(): Returns the number of elements in the stack.
 // Requirements:
 // The getMin() operation should work in O(1) time.
-//You are not allowed to use any additional data structures like arrays or lists, except for the stack itself.
-template< class T>
-class Stack{
+// You are not allowed to use any additional data structures like arrays or lists, except for the stack itself.
+template<class T>
+class Stack {
 public:
 
-// properties 
-T* arr;
-int size;
-int top;
- stack<pair<int, int> > s; 
-// Constructor 
+    // properties 
+    T* arr;
+    int size;
+    int top;
+    stack<pair<T, T> > s;
+
+    // Constructor 
 public:
-Stack(int size){
-    this -> size = size;
-    arr = new T[size];
-    this->top =  -1;
-  //  this->s = make_pair(0,0);
+    Stack(int size) {
+        this->size = size;
+        arr = new T[size];
+        this->top = -1;
+    }
 
-}
 public:
-Stack() {}
-// functions
-// is Empty
+    Stack() {}
 
-bool isEmpty(){
-    if(top == -1){
-        return true;
-    }
-    else {
-        return false;
-    }
-
-}
-// is full
-
-bool isFull(){
-    if(top == size -1){
-        return true;
-    }
-    else{
-        return false;
-}
-}
-// 
-
- void push(T element) {
-        if (s.empty()) {
-        
-            s.push(std::make_pair(element, element));
+    // functions
+    // is Empty
+    bool isEmpty() {
+        if (top == -1) {
+            return true;
         } else {
-            
-            int currentMin = min(element, s.top().second);
-            s.push(std::make_pair(element, currentMin)); 
+            return false;
         }
     }
 
- int getMin(){
-
-    if(s.empty()){
-
-        return -1;
+    // is full
+    bool isFull() {
+        if (top == size - 1) {
+            return true;
+        } else {
+            return false;
+        }
     }
-    else {
-        return s.top().second;
+
+    // push element
+  void push(T element) {
+    if (!isFull()) {  
+        if (s.empty()) {
+            top++;
+           arr[top] = element; 
+            s.push(std::make_pair(element, element));
+        } else {
+            top++;
+          arr[top] = element; 
+            int currentMin = min(element, s.top().second);
+            s.push(std::make_pair(element, currentMin));
+        }
+    } else {
+        cout << "Stack Overflow" << endl;
+    }
+}
+
+    int getMin() {
+        if (s.empty()) {
+            return -1;
+        } else {
+            return s.top().second;
+        }
     }
 
- }   
-
-
-// Pop element
-void pop(){
-    if(top == -1){
-        
+   
+   void pop() {
+    if (top == -1) {
         cout << "Stack Underflow " << endl;
+    } else {
+        s.pop(); 
+        top--;    
     }
-    else{
-
-        top--;
-    }
-
-
 }
+
 public:
-  int getSize(){
-    return top +1;
-}
-
+    int getSize() {
+        return top + 1;
+    }
 };
-// Size function to Get The Size
 
-
-
-
-// int getSize(stack<int>&s){
-
-//     int count = 0;
-//     while(!s.empty()){
-
-//         count++;
-//         s.pop();
-//     }
-
-//     return count;
-// }
-
-
-
-
-// Minimum Function  0(1)
-
-
-
-// Bonus Taskkkkkk
-
+// Bonus Task
 vector<int> getGreaterElement(vector<int>& arr) {
     stack<int> s;
     vector<int> ans(arr.size());
     int current;
 
-    for(int i = arr.size() - 1 ; i>= 0 ; i--)
-    {
-
+    for (int i = arr.size() - 1; i >= 0; i--) {
         current = arr[i];
-        while(!s.empty() && s.top()  <= current)
-        {
+        while (!s.empty() && s.top() <= current) {
             s.pop();
         }
-        if(s.empty()){
+        if (s.empty()) {
             ans[i] = -1;
-        }
-        // We have the greater
-        // You have the Element
-        else{
-        ans[i] = s.top();
+        } else {
+            ans[i] = s.top();
         }
         s.push(current);
-
     }
-
-
     return ans;
 }
 
-int main()
-{
-   
-  vector<int> arr;
+
+
+  int main() {
+
+    vector<int> arr;
     arr.push_back(4);
     arr.push_back(5);
     arr.push_back(2);
     arr.push_back(25);
 
     vector<int> res = getGreaterElement(arr);
-    cout << "The Next Greater Element stack is" <<endl;
+    cout << "The Next Greater Element stack is" << endl;
     for (int i = 0; i < res.size(); i++) {
         cout << res[i] << " ";
     }
     cout << endl;
-
-    Stack<int> MyStack;
+    
+    Stack<int> MyStack(10);  
     MyStack.push(1);
     MyStack.push(99);
     MyStack.push(-1);
 
-   int min =  MyStack.getMin();
-   cout << " The Minimum Number is " <<  min  << endl;
+    int min = MyStack.getMin();
+    cout << "The Minimum Number is " << min << endl;
 
+    int size = MyStack.getSize();
+    cout << "The Size of the Stack is " << size << endl;
 
-   int size = MyStack.getSize();
-   cout<< "The Size of the Stack is " << size << endl;
+    cout << endl;
 
-    
+    MyStack.pop();
+    int Newmin = MyStack.getMin();
+    cout << "The Minimum Number is " << Newmin << endl;
+
     return 0;
 }
+
+
