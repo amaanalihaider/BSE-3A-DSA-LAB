@@ -1,7 +1,7 @@
 
 #include <iostream>
 #include <vector>
-#include<stack>
+
 using namespace std;
 
 // Implementing The Stack Class
@@ -20,15 +20,18 @@ public:
 T* arr;
 int size;
 int top;
-
+ stack<pair<int, int> > s; 
 // Constructor 
 public:
 Stack(int size){
     this -> size = size;
-    arr = new int[size];
+    arr = new T[size];
     this->top =  -1;
+  //  this->s = make_pair(0,0);
 
 }
+public:
+Stack() {}
 // functions
 // is Empty
 
@@ -47,22 +50,35 @@ bool isFull(){
     if(top == size -1){
         return true;
     }
-    else[
+    else{
         return false;
-    ]
+}
 }
 // 
 
-void push(T element){
-if(top == size - 1){
-    cout<<"Stack Overflow "<<endl;
-    
-}
-else {
-    top++;
-    arr[top] = element;
-}
-}
+ void push(T element) {
+        if (s.empty()) {
+        
+            s.push(std::make_pair(element, element));
+        } else {
+            
+            int currentMin = min(element, s.top().second);
+            s.push(std::make_pair(element, currentMin)); 
+        }
+    }
+
+ int getMin(){
+
+    if(s.empty()){
+
+        return -1;
+    }
+    else {
+        return s.top().second;
+    }
+
+ }   
+
 
 // Pop element
 void pop(){
@@ -77,22 +93,32 @@ void pop(){
 
 
 }
+public:
+  int getSize(){
+    return top +1;
+}
 
 };
-
 // Size function to Get The Size
 
-int getSize(stack<int>&s){
 
-    int count = 0;
-    while(!s.empty()){
 
-        count++;
-        s.pop();
-    }
 
-    return count;
-}
+// int getSize(stack<int>&s){
+
+//     int count = 0;
+//     while(!s.empty()){
+
+//         count++;
+//         s.pop();
+//     }
+
+//     return count;
+// }
+
+
+
+
 // Minimum Function  0(1)
 
 
@@ -138,10 +164,24 @@ int main()
     arr.push_back(25);
 
     vector<int> res = getGreaterElement(arr);
-    cout << "The stack is" <<endl;
+    cout << "The Next Greater Element stack is" <<endl;
     for (int i = 0; i < res.size(); i++) {
         cout << res[i] << " ";
     }
     cout << endl;
+
+    Stack<int> MyStack;
+    MyStack.push(1);
+    MyStack.push(99);
+    MyStack.push(-1);
+
+   int min =  MyStack.getMin();
+   cout << " The Minimum Number is " <<  min  << endl;
+
+
+   int size = MyStack.getSize();
+   cout<< "The Size of the Stack is " << size << endl;
+
+    
     return 0;
 }
