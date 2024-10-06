@@ -14,6 +14,16 @@ void reverseString(string& inputString);
 void printString(const string& inputString);
 bool isOperator(char c);
 
+int multiplier(int num1, int num2) {
+    
+    if (num2 == 0) {
+        return 0;
+    }
+    
+    return num1 + multiplier(num1, num2 - 1);
+}
+
+
 
 int power(int number, int pow) {
 
@@ -233,9 +243,11 @@ void AllMenu() {
     cout << "Please Select Any Option to Proceed to Press E to Exit" << endl;
     cout << "1. Convert The infix to Postfix" << endl;
     cout << "2. Convert the Infix to Prefix" << endl;
-    //    cout << "3. Evaluate the Postfix Expression" << endl;
+      cout << "3. Evaluate the Postfix Expression" << endl;
      cout << "4. Evaluate the Prefix Expression" << endl;
-    cout << "3. Postfix Evaluation " << endl;
+     cout<< "5. To Calculate Power"<<endl;
+     cout<< "6. To Find Multiply "<<endl;
+   // cout << "3. Postfix Evaluation " << endl;
     cout << "E to Exit" << endl;
 }
 
@@ -454,7 +466,35 @@ int main() {
             getline(cin, UserInput);
             double EvaluationExpression = prefixEvaluation(UserInput);
             cout << "The Evaluation of the Prefix Expression is " << EvaluationExpression << endl;
-        } else if (choice == 'E' || choice == 'e') {
+            
+        }
+        else if (choice == 5){
+            cout<<"Enter the Number "<<endl;
+            int number; 
+            cin>> number;
+            
+            cout<<"Please Input the Power"<<endl;
+            int pwer;
+            cin>>pwer;
+            
+            int result = power(number,pwer);
+            cout<<" The Power of the Number is "<< result<<endl;
+            
+        }
+        else if(choice == 6 ){
+            
+            cout<<"Enter the Number to find the Product "<<endl;
+            int n;
+            cin>>n;
+            cout<<"Enter the number to be multiplied with "<<endl;
+            int num2;
+            cin>>num2;
+            int res = multiplier(n,num2);
+            cout<<"Multiplication is "<<res << endl;
+            
+        }
+        
+        else if (choice == 'E' || choice == 'e') {
             exit(0);
         } else {
             cout << "Invalid choice. Please try again." << endl;
