@@ -10,49 +10,35 @@ bool checkBalanced(string inputString);
 void AllMenu();
 string convertToPostfix(string inputString);
 string convertToPrefix(string inputString);
-void reverseString(string &inputString); 
-void printString(const string &inputString);
+void reverseString(string& inputString);
+void printString(const string& inputString);
 bool isOperator(char c);
-double prefixEvaluation(string &inputString){
-
-stack<double> s;
-
-for(int i = 0; i< inputString.length();i++){
-
-        if(isOperator(inputString[i]) && s.empty() ){
-         
-            s.push(inputString[i]);
 
 
-        }
-
-}
-}
-
-int power(int number,int pow){
+int power(int number, int pow) {
 
     // Base case 
-    if(pow == 0){
+    if (pow == 0) {
         return 1;
     }
-    else if(pow == 1){
+    else if (pow == 1) {
         return number;
     }
     else
-      return number*power(number,--pow);
+        return number * power(number, --pow);
 }
 
-double postfixEvaluation(string &inputString) {
+double postfixEvaluation(string& inputString) {
     stack<double> s;
-    stringstream ss(inputString); 
+    stringstream ss(inputString);
     string token;
 
- 
+
     while (ss >> token) {
         if (isdigit(token[0]) || (token.length() > 1 && isdigit(token[1]))) {
-         
-            s.push(stod(token)); // Convert string to double (to handle multi-digit numbers)
-        } 
+
+            s.push(stod(token)); 
+        }
         else if (isOperator(token[0])) {
             if (s.size() < 2) {
                 cout << "Error: Insufficient values in expression." << endl;
@@ -65,28 +51,28 @@ double postfixEvaluation(string &inputString) {
 
             // Perform the operation
             switch (token[0]) {
-                case '+':
-                    s.push(temp2 + temp);
-                    break;
-                case '-':
-                    s.push(temp2 - temp);
-                    break;
-                case '/':
-                    if (temp == 0) {
-                        cout << "Error: Division by zero." << endl;
-                        return 0;
-                    }
-                    s.push(temp2 / temp);
-                    break;
-                case '*':
-                    s.push(temp2 * temp);
-                    break;
-                case '^':
-                    s.push(power(temp2, static_cast<int>(temp)));
-                    break;
-                default:
-                    cout << "Invalid operator: " << token[0] << endl;
+            case '+':
+                s.push(temp2 + temp);
+                break;
+            case '-':
+                s.push(temp2 - temp);
+                break;
+            case '/':
+                if (temp == 0) {
+                    cout << "Error: Division by zero." << endl;
                     return 0;
+                }
+                s.push(temp2 / temp);
+                break;
+            case '*':
+                s.push(temp2 * temp);
+                break;
+            case '^':
+                s.push(power(temp2, static_cast<int>(temp)));
+                break;
+            default:
+                cout << "Invalid operator: " << token[0] << endl;
+                return 0;
             }
         }
         else {
@@ -107,16 +93,16 @@ double postfixEvaluation(string &inputString) {
 
 
 
-void printString(const string &inputString) {
+void printString(const string& inputString) {
     for (int i = 0; i < inputString.length(); i++) {
         cout << inputString[i];
     }
 }
 
-void reverseString(string &inputString) { 
+void reverseString(string& inputString) {
     int start = 0;
-    int end = inputString.length() - 1;  
-    
+    int end = inputString.length() - 1;
+
     while (start < end) {
         swap(inputString[start], inputString[end]);
         start++;
@@ -134,8 +120,8 @@ public:
     // Constructor
     Stack(int size) {
         this->size = size;
-        arr = new T[size];  
-        top = -1; 
+        arr = new T[size];
+        top = -1;
     }
 
     ~Stack() {
@@ -153,24 +139,27 @@ public:
     void push(T element) {
         if (isFull()) {
             cout << "Stack Overflow" << endl;
-        } else {
-            arr[++top] = element;  
+        }
+        else {
+            arr[++top] = element;
         }
     }
 
     void pop() {
         if (isEmpty()) {
             cout << "Stack is empty" << endl;
-        } else {
-            --top;  
+        }
+        else {
+            --top;
         }
     }
 
     T getTop() {
         if (isEmpty()) {
             cout << "Stack is empty" << endl;
-            return T();  
-        } else {
+            return T();
+        }
+        else {
             return arr[top];
         }
     }
@@ -192,7 +181,7 @@ public:
         this->value = value;
     }
 
-    int getValue() { 
+    int getValue() {
         return value;
     }
 
@@ -210,29 +199,32 @@ bool checkBalanced(string inputString) {
     for (int i = 0; i < inputString.length(); i++) {
         if (inputString[i] == '(') {
             c.push(inputString[i]);
-        } else if (inputString[i] == ')' && !c.empty() && c.top() == '(') {
+        }
+        else if (inputString[i] == ')' && !c.empty() && c.top() == '(') {
             c.pop();
         }
-        
+
     }
-      for (int i = 0; i < inputString.length(); i++) {
+    for (int i = 0; i < inputString.length(); i++) {
         if (inputString[i] == '{') {
             c.push(inputString[i]);
-        } else if (inputString[i] == '}' && !c.empty() && c.top() == '{') {
+        }
+        else if (inputString[i] == '}' && !c.empty() && c.top() == '{') {
             c.pop();
         }
-        
+
     }
-      for (int i = 0; i < inputString.length(); i++) {
+    for (int i = 0; i < inputString.length(); i++) {
         if (inputString[i] == '[') {
             c.push(inputString[i]);
-        } else if (inputString[i] == ']' && !c.empty() && c.top() == '[') {
+        }
+        else if (inputString[i] == ']' && !c.empty() && c.top() == '[') {
             c.pop();
         }
-        
+
     }
-    
-    
+
+
     return c.empty();
 }
 
@@ -241,30 +233,30 @@ void AllMenu() {
     cout << "Please Select Any Option to Proceed to Press E to Exit" << endl;
     cout << "1. Convert The infix to Postfix" << endl;
     cout << "2. Convert the Infix to Prefix" << endl;
-//    cout << "3. Evaluate the Postfix Expression" << endl;
-   // cout << "4. Evaluate the Prefix Expression" << endl;
-    cout << "3. Postfix Evaluation " <<endl; 
+    //    cout << "3. Evaluate the Postfix Expression" << endl;
+     cout << "4. Evaluate the Prefix Expression" << endl;
+    cout << "3. Postfix Evaluation " << endl;
     cout << "E to Exit" << endl;
 }
 
 
 void CheckOperatorPrecidence(Operator& object) {
     switch (object.getSymbol()) {
-        case '+':
-        case '-':
-            object.setValue(1);
-            break;
-        case '*':
-        case '/':
-            object.setValue(2);
-            break;
-        case '^':
-            object.setValue(3);
-            break;
+    case '+':
+    case '-':
+        object.setValue(1);
+        break;
+    case '*':
+    case '/':
+        object.setValue(2);
+        break;
+    case '^':
+        object.setValue(3);
+        break;
     }
 }
 
-// Check if character is an operator
+
 bool isOperator(char c) {
     return (c == '+' || c == '-' || c == '*' || c == '/' || c == '^');
 }
@@ -273,94 +265,155 @@ string convertToPrefix(string input) {
     // Reverse the string
     reverseString(input);
 
-    
+
     for (int i = 0; i < input.length(); i++) {
         if (input[i] == '(') {
             input[i] = ')';
-        } else if (input[i] == ')') {
+        }
+        else if (input[i] == ')') {
             input[i] = '(';
         }
     }
     for (int i = 0; i < input.length(); i++) {
         if (input[i] == '{') {
             input[i] = '}';
-        } else if (input[i] == '}') {
+        }
+        else if (input[i] == '}') {
             input[i] = '{';
         }
     }
     for (int i = 0; i < input.length(); i++) {
         if (input[i] == '[') {
             input[i] = ']';
-        } else if (input[i] == ']') {
+        }
+        else if (input[i] == ']') {
             input[i] = '[';
         }
     }
 
-    
+
     string postfixExpression = convertToPostfix(input);
 
-    
+
     reverseString(postfixExpression);
-  
-    return postfixExpression; 
+
+    return postfixExpression;
+}
+ double prefixEvaluation(string& inputString) {
+    stack<double> s;
+
+   
+    for (int i = inputString.length() - 1; i >= 0; i--) {
+        char currentChar = inputString[i];
+
+       
+        if (isdigit(currentChar)) {
+            s.push(currentChar - '0'); 
+        }
+        else if (isOperator(currentChar)) {
+            if (s.size() < 2) {
+                cout << "Error: Insufficient values in expression." << endl;
+                return 0;
+            }
+
+            // Pop two operands from stack
+            double operand1 = s.top(); s.pop();
+            double operand2 = s.top(); s.pop();
+
+            // Perform the operation
+            switch (currentChar) {
+            case '+':
+                s.push(operand1 + operand2);
+                break;
+            case '-':
+                s.push(operand1 - operand2);
+                break;
+            case '*':
+                s.push(operand1 * operand2);
+                break;
+            case '/':
+                if (operand2 == 0) {
+                    cout << "Error: Division by zero." << endl;
+                    return 0;
+                }
+                s.push(operand1 / operand2);
+                break;
+            case '^':
+                s.push(power(operand1, static_cast<int>(operand2)));
+                break;
+            default:
+                cout << "Invalid operator: " << currentChar << endl;
+                return 0;
+            }
+        }
+    }
+
+    if (s.size() != 1) {
+        cout << "Error: Invalid prefix expression." << endl;
+        return 0;
+    }
+
+    return s.top(); 
 }
 
 
+
 string convertToPostfix(string inputString) {
-   
+
     stack<char> s;
 
-  
+
     string answer;
 
 
     for (int i = 0; i < inputString.length(); i++) {
         char currentChar = inputString[i];
 
-       
+
         if (isalpha(currentChar)) {
             answer += currentChar;
         }
-        
+
         else if (currentChar == '(') {
             s.push(currentChar);
         }
-    
+
         else if (currentChar == ')') {
             while (!s.empty() && s.top() != '(') {
                 answer += s.top();
                 s.pop();
             }
             if (!s.empty()) {
-                s.pop();  
+                s.pop();
             }
         }
-    
+
         else if (isOperator(currentChar)) {
             Operator currentOperator;
             currentOperator.setSymbol(currentChar);
             CheckOperatorPrecidence(currentOperator);
 
-           
+
             while (!s.empty() && s.top() != '(') {
                 Operator stackOperator;
                 stackOperator.setSymbol(s.top());
                 CheckOperatorPrecidence(stackOperator);
 
-             
+
                 if (stackOperator.getValue() >= currentOperator.getValue()) {
                     answer += s.top();
                     s.pop();
-                } else {
-                    break;  
+                }
+                else {
+                    break;
                 }
             }
-           
+
             s.push(currentChar);
         }
     }
 
-  
+
     while (!s.empty()) {
         answer += s.top();
         s.pop();
@@ -371,36 +424,38 @@ string convertToPostfix(string inputString) {
 
 int main() {
     AllMenu();
-    
+
     int choice;
     string UserInput;
 
     do {
         cout << "Please enter your choice: ";
         cin >> choice;
-        cin.ignore();  
+        cin.ignore();
 
         if (choice == 1) {
-            cout << "Please Enter an Infix Expression to convert to Postfix: ";
+            cout << " Enter an Infix Expression to convert to Postfix: ";
             getline(cin, UserInput);
             string postfixExpression = convertToPostfix(UserInput);
             cout << "Postfix Expression: " << postfixExpression << endl;
 
         } else if (choice == 2) {
-            cout << "Please Enter an Infix Expression to convert to Prefix: ";
+            cout << " Enter an Infix Expression to convert to Prefix: ";
             getline(cin, UserInput);
             string prefixExpression = convertToPrefix(UserInput);
             cout << "Prefix Expression: " << prefixExpression << endl;
-        } 
-        else if (choice == 3){
-            cout<<"Enter the expression to Perform Postfix Evaluation"<<endl;
+        } else if (choice == 3) {
+            cout << "Enter the expression to Perform Postfix Evaluation: ";
             getline(cin, UserInput);
-
             double EvaluationExpression = postfixEvaluation(UserInput);
-            cout<<" The Evaluation of the PostFix Expression is " << EvaluationExpression <<endl;
-        }    
-        else if (choice == 'E' || choice == 'e') {
-            exit(0);  
+            cout << "The Evaluation of the PostFix Expression is " << EvaluationExpression << endl;
+        } else if (choice == 4) { // Option for prefix evaluation
+            cout << "Enter the expression to Perform Prefix Evaluation: ";
+            getline(cin, UserInput);
+            double EvaluationExpression = prefixEvaluation(UserInput);
+            cout << "The Evaluation of the Prefix Expression is " << EvaluationExpression << endl;
+        } else if (choice == 'E' || choice == 'e') {
+            exit(0);
         } else {
             cout << "Invalid choice. Please try again." << endl;
         }
