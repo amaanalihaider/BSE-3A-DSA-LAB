@@ -1,0 +1,157 @@
+#include<iostream>
+#include <limits>
+using namespace std;
+
+class CircularQueue {
+    
+public:
+    int *arr;    
+    int size;     
+    int front;    
+    int rear;     
+
+    // Constructor 
+    CircularQueue(int n) {
+        size = n;
+        arr = new int[size];
+        front = rear = -1;  
+    }
+
+    bool insert(int element) {
+        // check Full 
+        if ((front == 0 && rear == size - 1) || (rear == (front - 1) % (size - 1))) {
+            cout << "Queue is Full! Cannot Insert the Element " << element << endl;
+            return false;
+        }
+
+        // If the queue is empty, initialize front and rear to 0
+        if (front == -1) {
+            front = rear = 0;
+            arr[rear] = element;
+        }
+        // If rear has reached the end of the queue wrap around to the beginning
+        else if (rear == size - 1 && front != 0) {
+            rear = 0;
+            arr[rear] = element;
+        }
+        // Otherwise, increment rear and insert the element
+        else {
+            rear++;
+            arr[rear] = element;
+        }
+        
+        return true;
+    }
+
+    // Remove an element from the circular queue
+    int remove() {
+        //  If Queue is Empty
+        if (front == -1) {
+            cout << "Queue is Empty! Nothing to Remove." << endl;
+            return -1;
+        }
+
+        // Get the front element
+        int ans = arr[front];
+        arr[front] = -1;  
+
+        // Single Element Case
+        if (front == rear) {
+            front = rear = -1;
+        }
+        // Wrap Around case
+        else if (front == size - 1) {
+            front = 0;
+        }
+        // Last case
+        else {
+            front++;
+        }
+
+        return ans;
+    }
+    int getfront(){
+        return front;
+    }
+
+    // delete the Objects
+    ~CircularQueue() {
+        delete[] arr;
+    }
+
+};
+
+void menu()
+{   cout << "0. Display The Queue " << endl;
+    cout << "1. To add Item to a Queue " << endl;
+    cout << "2. Remove item from a Queue " << endl;
+    cout << "3 or E to  Exit" << endl;
+}
+int getValidQueueSize() {
+    int size;
+    while (true) {
+        cout << "Enter the size of the queue: ";
+        cin >> size;
+        if (cin.fail()) {
+            cin.clear();  
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');  
+            cout << "Invalid input." << endl;
+        } else if (size <= 0) {
+            cout << "Queue size must be a positive number." << endl;
+        } else {
+            // Return kra do its a valid size
+            return size;  
+        }
+    }
+}
+int main() {
+    int size  = getValidQueueSize();    
+
+    CircularQueue q(size);
+
+    char choice;  
+    int element;
+
+    do {
+        menu();
+        cout << "Make a choice from the menu: ";
+        cin >> choice;
+        if(choice == '0'){
+            if(q.getfront() == -1){
+                cout<<" The Queue is empty Nothing To Display"<< endl;
+                continue;
+            }
+            for(int i = 0; i< size ; i++){
+                cout<<" "<<q.getfront() <<" ";
+                q.remove();
+            }
+           
+            }
+            
+
+      else  if (choice == '1') {
+            cout << "Enter the element to insert: ";
+            cin >> element;
+
+            if (q.insert(element)) {
+                cout << "Element " << element << " inserted into the queue." << endl;
+            }
+        }
+        else if (choice == '2') {
+            int removedElement = q.remove();
+            if (removedElement != -1) {
+                cout << "Removed element: " << removedElement << endl;
+            }
+        }
+        else if (choice == '3' || choice == 'E' || choice == 'e') {
+            cout << "Exiting the program." << endl;
+            exit(0);
+        }
+        else {
+            cout << "Invalid input. Please choose again." << endl;
+        }
+
+    } while (true);
+
+    return 0;
+}
