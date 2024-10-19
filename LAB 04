@@ -1,0 +1,256 @@
+    #include<iostream>
+    using namespace std;
+    // Forward declarations 
+  
+
+    class Node{
+
+    int data;
+    int priority;
+
+    public:
+    Node* next;
+
+    Node () {}
+    Node(int data , int priority){
+        this->data = data;
+        next = NULL;
+        this-> priority = priority;
+
+    }
+    // Getter and setter
+    void setData(int data){
+
+        this->data = data;
+    }
+    int getData(){
+        return data;
+    }
+
+    void setPriority(int priority){
+
+        this->priority = priority;
+
+    }
+    int getPriority(){
+        return  priority;
+    }
+
+    };
+      int searchData(Node* head, int data);
+    // push
+    void enqueue(Node* & head , int data , int priority){
+        // Cases 
+        
+        // Tracker
+        Node* forward = head;
+
+        Node* temp = new Node( data, priority);
+
+    // No Node or Either 1 
+    if(head == NULL || head->getPriority() < priority){
+            temp->next = head;
+            head = temp;
+    } 
+        else {
+            // Multiple Node Handling 
+            // Iterating Until You find all with greater priorities 
+
+            while( forward -> next  != NULL && forward->next->getPriority() > priority ){
+                // Just keep going 
+                forward = forward->next;
+            }
+
+            // When you are out of the loop You Have found the element
+            temp->next = forward -> next;
+        forward->next = temp;
+        }
+
+    }
+
+    // pop()
+    Node* pop(Node* head){
+
+        Node* temp = head;
+        head = head->next;
+        delete temp;
+        return head;
+
+    }
+
+    // peek()
+    int peek(Node* head){
+
+        return head->getData();
+    }
+    // isEmpty()
+    bool isEmpty(Node* head) {
+        return head == NULL;
+    }
+    // size()
+    int getSize(Node* head){
+        int size = 0;
+        while(head ->next != NULL){
+            size++;
+            head = head->next;
+        }
+        return size;
+    }
+    // changePriority(
+    // clear()
+    Node* clear(Node* head){
+        // To Empty the Queue
+
+    while(head != NULL){
+        
+        Node* temp = head;
+            head = head-> next;
+            
+            delete temp;
+    }
+
+        return NULL;
+    }
+
+    // To Delete queue With Specific Priority 
+    // int deleteNode(Node* head, int priority,int data){
+        
+    //         int ans = searchData(head, data);
+    //         if(ans == data){
+    //             // You need to Iterate from the List first
+    //           Node* temp = 
+    //              // Remove that Node if Found 
+
+
+
+    //             // Ask for priority 
+    //             // Swap priority with new one 
+    //             // Re Merge it with the list according to the Priority 
+                
+    //         } 
+
+
+                
+            
+
+    //     // False return 
+
+
+    // }
+
+
+    int ChangeeNodePriority(Node* head, int data , int oldPriority,int NewPriority){
+        // Base Case 
+        if(head == NULL){
+            cout<< " Nothing khaali ha " << endl;
+            return -1;
+        }
+        if(head->getData() == data){
+
+            Node* current = head;
+            head = head -> next;
+            current -> next = NULL;
+
+            current->setPriority(NewPriority);
+            // Push it into the Queue Again (re merge krdo)
+            enqueue(head,current->getData(),NewPriority);
+        }
+
+            // If it isnt the first Node
+            // Traversing Through 
+            Node* current = head;
+           Node* temp  = NULL;
+
+            while(current->next != NULL && current -> getData() != data){
+                    temp = current;
+                    current = current -> next;
+            }
+            // You have matched the Data  and out of the loop 
+            if(current != NULL){
+                // Remove the NODE
+                temp -> next = current -> next;
+                current->next = NULL;
+
+                current->setPriority(NewPriority);
+
+                enqueue(head,current->getData(),NewPriority);
+                return 1;
+            }
+            return -1;
+
+        }
+
+    // Search From the list 
+        int searchData(Node* head, int data) {
+            if( head == NULL){
+                cout<< " Element Not Found "<< endl;
+                return -1;
+            }
+        if(head ->getData() == data){
+            return head->getData();
+        }
+        else{
+            // iterate krlo Yahan 
+            Node* temp = head;
+            while(temp != NULL){
+                if(temp->getData() == data){
+                    return temp->getData();
+                }   
+                temp = temp-> next;
+            }
+        }
+        cout<< " Element Not Found "<< endl;
+        return -1;
+        }
+
+    // Comaprision 
+
+
+
+
+    // printQueue() 
+    void printQueue(Node* head){
+
+        while(head != NULL)
+        {
+        Node* temp = head;
+        cout<< temp->getData()<<" ";
+        head = head-> next;
+        
+        }
+        cout<< endl;
+    }
+
+
+
+
+
+    int main(){
+
+    Node* pq = NULL;
+
+        enqueue(pq, 4, 1);
+        enqueue(pq, 5, 2);
+        enqueue(pq, 6, 3);
+        enqueue(pq, 7, 0);
+
+        cout<< endl;
+        int ans = searchData(pq,11);
+       
+
+      
+         cout<< endl;
+        // int change = ChangeeNodePriority(pq,7,0,4);
+        // cout<<change;
+
+        cout<< endl;
+          while (!isEmpty(pq)) {
+            cout << " " << peek(pq);
+            pq = pop(pq);
+        }
+        return 0;
+    } 
+
+
+
+    
