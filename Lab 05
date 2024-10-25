@@ -1,4 +1,8 @@
 #include<iostream>
+#include <algorithm>  // for std::all_of
+#include <cctype> 
+#include<string>
+
 using namespace std;
 //// Forward Declarations 
 //void insertAtHead(Node*& head, int data);
@@ -9,6 +13,8 @@ using namespace std;
 //void deleteAtHead(Node*& head);
 //void deleteFromAnyPosition(Node*& head, int position);
 //void deleteFromTail(Node*& head);
+//void menU();
+// bool validInput
 
 
 class Node {
@@ -25,7 +31,7 @@ public:
 class LinkedList {
 public:
     Node* head;
-// Constructor
+    // Constructor
     LinkedList() {
         head = NULL;
     }
@@ -131,6 +137,9 @@ public:
 
     }
 
+    // Menu
+   
+
     // Deletion Functions
 
     void deleteAtHead() {
@@ -223,6 +232,49 @@ public:
     }
 
 };
+void Menu() {
+
+    cout << " ----Menu----- " << endl;
+    cout << "1. Create a Stack  " << endl;
+    cout << "2. Create a Queues  " << endl;
+    cout << "3. Create a Double Ended Queue " << endl;
+    cout << "4. E or e to Exit" << endl;
+
+}
+void stackMenu() {
+    // List of operations
+    cout << "1.Push Element " << endl;
+    cout << "2.Pop Element " << endl;
+    cout << "3.View Peak Element " << endl;
+    cout << "4.Display Stack " << endl;
+}
+void queueMenu() {
+
+    // List of Operations 
+    cout << "1.Insert Element " << endl;
+    cout << "2.Remove Element " << endl;
+    cout << "4.Display Queue " << endl;
+
+    
+}
+void dequeMenu() {
+
+    // List of Operations
+    cout << "1.Push Element At Front " << endl;
+    cout << "2.Pop Element At Front " << endl;
+    cout << "1.Push Element At Rear " << endl;
+    cout << "2.Pop Element At Rear " << endl;
+    cout << "4.Display Deque " << endl;
+}
+bool validInput(string input) {
+    // All the Number Entered are Digit
+    if (all_of(input.begin(), input.end(), ::isdigit)) {
+        return true;
+    }
+    else {
+        return false;
+    }
+}
 // Stack Using LinkedList
 class Stack {
 public:
@@ -231,10 +283,10 @@ public:
     Stack() {}
 
 
-// Functions
-    void push(int data){
+    // Functions
+    void push(int data) {
         list.insertAtHead(data);
-}
+    }
     void pop() {
         list.deleteAtHead();
     }
@@ -242,87 +294,123 @@ public:
         list.getPeek();
     }
     bool isEmpty() {
-        if(list.isEmpty()){
+        if (list.isEmpty()) {
             return true;
 
         }
-        else{
+        else {
             return false;
         }
     }
-    void display(){
+    void display() {
         list.displayLinkedList();
     }
 };
 
 // Queue Using a Linked list 
-class Queue{
+class Queue {
 public:
 
-LinkedList list;
+    LinkedList list;
 
-Queue() {}
+    Queue() {}
 
-// Functions
-// Insertion  at head and deleteion from tail
-void insert(int data){
-    list.insertAtHead(data);
-}
-void remove(){
-    list.deleteFromTail();
-}
-void display(){
-    list.displayLinkedList();
-}
+    // Functions
+    // Insertion  at head and deleteion from tail
+    void insert(int data) {
+        list.insertAtHead(data);
+    }
+    void remove() {
+        list.deleteFromTail();
+    }
+    void display() {
+        list.displayLinkedList();
+    }
 
 };
 
 // Dequeue using Linked List
-class Deque{
+class Deque {
 public:
-LinkedList list;
+    LinkedList list;
 
-Deque() {}
+    Deque() {}
 
-// functions 
+    // functions 
 
-void insertAtFront(int data){
-    list.insertAtHead(data);
-}
+    void insertAtFront(int data) {
+        list.insertAtHead(data);
+    }
 
-void popAtFront(){
-    list.deleteAtHead();
-}
-void insertAtRear(int data){
-    list.insertionAtTail(data);
-}
-void popAtRear(){
-    list.deleteFromTail();
-}
-void display(){
-    list.displayLinkedList();
-}
+    void popAtFront() {
+        list.deleteAtHead();
+    }
+    void insertAtRear(int data) {
+        list.insertionAtTail(data);
+    }
+    void popAtRear() {
+        list.deleteFromTail();
+    }
+    void display() {
+        list.displayLinkedList();
+    }
 
 
 };
 
 
 int main() {
-    Node* head = NULL;
+    string choice;
+
+    do {
+        Menu();
+        cout << "Enter choice to proceed further: " << endl;
+        getline(cin, choice);  
+
+        if (!(choice == "1" || choice == "2" || choice == "3")) {
+            cout << "You have made an invalid choice. Please re-enter again." << endl;
+        }
+
+    } while (!(choice == "1" || choice == "2" || choice == "3"));
+
+    cout << "You selected: " << choice << endl;
+
+    if (choice == "1") {
+        // stacks Implementation
+        stackMenu();
+        Stack Obj;
+        
+   }
+    else if (choice == "2") {
+        // Queues Implementation
+
+    }
+    else if (choice == "3") {
+        // Double ended Queue Implementation
+    }
+    else {
+        // Wrong choice mate
+    }
+
+
+    return 0;
+}
+
+   /* Node* head = NULL;
 
     LinkedList l1;
     Stack s1;
-    cout<<" Checking stack Behaviour " << endl;
+    cout << " Checking stack Behaviour " << endl;
     s1.push(1);
     s1.push(2);
     s1.push(3);
     s1.push(4);
-    s1.push(5); 
+    s1.push(5);
     s1.pop();
     s1.display();
 
     cout << endl;
-    cout<<" Checking Queue Behaviour " << endl;
+    cout << " Checking Queue Behaviour " << endl;
 
     Queue Q1;
     Q1.insert(1);
@@ -332,11 +420,11 @@ int main() {
     Q1.insert(5);
     Q1.remove();
     Q1.display();
-    
+
 
     cout << endl;
     cout << " Checking DEQUE Implementation " << endl;
-    
+
     Deque dq;
     dq.insertAtFront(1);
     dq.insertAtRear(2);
@@ -344,11 +432,10 @@ int main() {
     dq.insertAtRear(4);
 
     dq.display();
-    cout << " pop at front "<< endl;
+    cout << " pop at front " << endl;
     dq.popAtFront();
     dq.display();
-    cout<< " pop at rear "<< endl;
+    cout << " pop at rear " << endl;
     dq.popAtRear();
     dq.display();
-    return 0;
-}
+    return 0;*/
