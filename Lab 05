@@ -253,7 +253,8 @@ void queueMenu() {
     // List of Operations 
     cout << "1.Insert Element " << endl;
     cout << "2.Remove Element " << endl;
-    cout << "4.Display Queue " << endl;
+    cout << "3.Display Queue " << endl;
+    cout << "4. To Exit " << endl;
 
     
 }
@@ -326,7 +327,12 @@ public:
     void display() {
         list.displayLinkedList();
     }
-
+    bool isEmpty(){
+        if(list.isEmpty()){
+            return true;
+        }
+        else{return false;}
+    }
 };
 
 // Dequeue using Linked List
@@ -361,40 +367,162 @@ public:
 
 int main() {
     string choice;
-
-    do {
+    while (true) {
         Menu();
-        cout << "Enter choice to proceed further: " << endl;
+        cout << "Enter choice to proceed further (1, 2, 3, or e to exit): ";
         getline(cin, choice);  
 
-        if (!(choice == "1" || choice == "2" || choice == "3")) {
-            cout << "You have made an invalid choice. Please re-enter again." << endl;
+        if (choice == "1") {
+            // Stack Implementation
+            Stack Obj;
+            string stackChoice, data;
+            while (true) {
+                stackMenu();
+                cout << "Enter stack operation choice (1-4, or 5 to exit): ";
+                getline(cin, stackChoice);
+
+                if (stackChoice == "1") {
+                    cout << "Please enter data to push onto the stack: ";
+                    getline(cin, data);
+                    if (validInput(data)) {
+                        Obj.push(stoi(data));
+                    } else {
+                        cout << "Invalid input. Please enter a valid number.\n";
+                    }
+                } 
+                else if (stackChoice == "2") {
+                    if (!Obj.isEmpty()) {
+                        cout << "Popping top element: ";
+                        Obj.getPeak();
+                        Obj.pop();
+                    } else {
+                        cout << "Stack is empty.\n";
+                    }
+                } 
+                else if (stackChoice == "3") {
+                    if (!Obj.isEmpty()) {
+                        cout << "Top element of stack: ";
+                        Obj.getPeak();
+                    } else {
+                        cout << "Stack is empty.\n";
+                    }
+                } 
+                else if (stackChoice == "4") {
+                    Obj.display();
+                } 
+                else if (stackChoice == "5") {
+                    break;
+                } 
+                else {
+                    cout << "Invalid choice. Please try again.\n";
+                }
+            }
+        } 
+        else if (choice == "2") {
+            // Queue Implementation
+            Queue Q;
+            string queueChoice, data;
+            while (true) {
+                queueMenu();
+                cout << "Enter queue operation choice (1-3, or 4 to exit): ";
+                getline(cin, queueChoice);
+
+                if (queueChoice == "1") {
+                    cout << "Enter data to insert into the queue: ";
+                    getline(cin, data);
+                    if (validInput(data)) {
+                        Q.insert(stoi(data));
+                    } else {
+                        cout << "Invalid input. Please enter a valid number.\n";
+                    }
+                } 
+                else if (queueChoice == "2") {
+                    if (!Q.isEmpty()) {
+                        cout << "Removing front element.\n";
+                        Q.remove();
+                    } else {
+                        cout << "Queue is empty.\n";
+                    }
+                } 
+                else if (queueChoice == "3") {
+                    Q.display();
+                } 
+                else if (queueChoice == "4") {
+                    break;
+                } 
+                else {
+                    cout << "Invalid choice. Please try again.\n";
+                }
+            }
+        } 
+        else if (choice == "3") {
+            // Deque Implementation
+            Deque dq;
+            string dequeChoice, data;
+            while (true) {
+                dequeMenu();
+                cout << "Enter deque operation choice (1-5, or 6 to exit): ";
+                getline(cin, dequeChoice);
+
+                if (dequeChoice == "1") {
+                    cout << "Enter data to insert at the front: ";
+                    getline(cin, data);
+                    if (validInput(data)) {
+                        dq.insertAtFront(stoi(data));
+                    } else {
+                        cout << "Invalid input. Please enter a valid number.\n";
+                    }
+                } 
+                else if (dequeChoice == "2") {
+                    if (!dq.list.isEmpty()) {
+                        cout << "Removing front element.\n";
+                        dq.popAtFront();
+                    } else {
+                        cout << "Deque is empty.\n";
+                    }
+                } 
+                else if (dequeChoice == "3") {
+                    cout << "Enter data to insert at the rear: ";
+                    getline(cin, data);
+                    if (validInput(data)) {
+                        dq.insertAtRear(stoi(data));
+                    } else {
+                        cout << "Invalid input. Please enter a valid number.\n";
+                    }
+                } 
+                else if (dequeChoice == "4") {
+                    if (!dq.list.isEmpty()) {
+                        cout << "Removing rear element.\n";
+                        dq.popAtRear();
+                    } else {
+                        cout << "Deque is empty.\n";
+                    }
+                } 
+                else if (dequeChoice == "5") {
+                    dq.display();
+                } 
+                else if (dequeChoice == "6") {
+                    break;
+                } 
+                else {
+                    cout << "Invalid choice. Please try again.\n";
+                }
+            }
+        } 
+        else if (choice == "e" || choice == "E") {
+            cout << "Exiting program.\n";
+            break;
+        } 
+        else {
+            cout << "Invalid choice. Please enter a valid option.\n";
         }
-
-    } while (!(choice == "1" || choice == "2" || choice == "3"));
-
-    cout << "You selected: " << choice << endl;
-
-    if (choice == "1") {
-        // stacks Implementation
-        stackMenu();
-        Stack Obj;
-        
-   }
-    else if (choice == "2") {
-        // Queues Implementation
-
     }
-    else if (choice == "3") {
-        // Double ended Queue Implementation
-    }
-    else {
-        // Wrong choice mate
-    }
-
-
     return 0;
 }
+
+
+   
+
 
    /* Node* head = NULL;
 
