@@ -1,0 +1,72 @@
+#include<iostream>
+using namespace std;
+class Node {
+public:
+	int coeff;
+	int exp;
+	Node* next;
+
+// Constructor
+	Node(int coeff, int exp) {
+		this->coeff = coeff;
+		this->exp = exp;
+		next = NULL;
+	}
+};
+class LinkedList {
+public:
+	Node* head;
+
+	LinkedList() {
+		head = NULL;
+}
+// Functions
+
+	void InsertNode(int coff, int expp) {
+		// Base Case
+		if (head == NULL) {
+		
+			Node* temp = new Node(coff, expp);
+			temp->coeff = coff;
+			temp->exp = expp; 
+			temp->next = NULL;
+			head = temp;
+			return;
+		}
+
+		// If Not Empty, traverse to the end
+		Node* current = head;
+		while (current->next != NULL) {
+			current = current->next;
+		}
+		Node* Last = new Node(coff, expp);
+		current->next = Last;
+		Last->next = NULL;
+	}
+
+	void printList() {
+		Node* temp = head;
+		while (temp != NULL) {
+			cout << temp->coeff << "x" << "^" << temp->exp;
+			if (temp->next != NULL && temp->next->coeff >= 0) {
+				cout << " + ";
+			}
+			temp = temp->next;
+		}
+		cout << endl; 
+	}
+
+
+};
+int main() {
+
+	LinkedList L;
+	L.InsertNode(3, 2);
+	L.InsertNode(4, 0);
+	L.InsertNode(7, -1);
+
+	L.printList();
+
+
+	return 0;
+}
