@@ -1,0 +1,174 @@
+#include <iostream>
+using namespace std;
+
+class Node {
+public:
+    int score;
+    int match;
+    Node* next;
+    Node* previous;
+
+    // Constructor
+    Node(int score, int match) {
+        this->score = score;
+        this->match = match;
+        next = NULL;
+        previous = NULL;
+    }
+};
+
+class LinkedList {
+public:
+    Node* head;
+
+    // Constructor for LinkedList
+    LinkedList() {
+        head = NULL;
+    }
+
+    // Add Runs at Start: Insert the runs scored in a new match at the beginning of the list.
+    void insertAtHead(int score, int matchNumber) {
+        Node* temp = new Node(score, matchNumber);
+
+        // Check if head exists
+        if (head == NULL) {
+            head = temp;
+        } else {
+            // Insert at head
+            temp->next = head;
+            head->previous = temp;
+            head = temp;
+        }
+    }
+
+    // Add Runs at the End: Insert the runs scored in a new match at the end of the list.
+    void insertAtEnd(int score, int matchNumber) {
+        Node* temp = new Node(score, matchNumber);
+
+        // Check if list is empty
+        if (head == NULL) {
+            head = temp;
+        } else {
+            // Find the tail (last node)
+            Node* tail = head;
+            while (tail->next != NULL) {
+                tail = tail->next;
+            }
+            // Insert at end
+            tail->next = temp;
+            temp->previous = tail;
+        }
+    }
+
+    // Deletion of Nodes with Same Score
+    void deleteSameOccurrences(int score) {
+        Node* current = head;
+
+        // Traverse and delete nodes with matching score
+        while (current != NULL) {
+            if (current->score == score) {
+                if (current == head) {
+                    // Delete head node
+                    head = head->next;
+                    if (head) head->previous = NULL;
+                    delete current;
+                    current = head;
+                } else {
+                    // Delete non-head nodes
+                    Node* prev = current->previous;
+                    Node* next = current->next;
+
+                    if (next) next->previous = prev;
+                    if (prev) prev->next = next;
+
+                    delete current;
+                    current = next;
+                }
+            } else {
+                current = current->next;
+            }
+        }
+    }
+
+    // Display Scores in Forward Order
+    void printNode() {
+        Node* current = head;
+        if (!current) {
+            cout << "Nothing to display." << endl;
+            return;
+        }
+        while (current != NULL) {
+            cout << "Match Number: " << current->match << ", Score: " << current->score << endl;
+            current = current->next;
+        }
+    }
+
+    // Display Scores in Reverse Order
+    void displayInReverse() {
+        if (head == NULL) {
+            cout << "Nothing to display in reverse." << endl;
+            return;
+        }
+
+        // Find the tail (last node)
+        Node* tail = head;
+        while (tail->next != NULL) {
+            tail = tail->next;
+        }
+
+        // Traverse in reverse order
+        while (tail != NULL) {
+            cout << "Match Number: " << tail->match << ", Score: " << tail->score << endl;
+            tail = tail->previous;
+        }
+    }
+
+    // Find and Display Highest and Lowest Scores
+    void highestLowestScore() {
+        if (head == NULL) {
+            cout << "No scores available." << endl;
+            return;
+        }
+
+        int highestScore = head->score;
+        int lowestScore = head->score;
+        Node* temp = head;
+
+        // Traverse list to find highest and lowest scores
+        while (temp != NULL) {
+            if (temp->score > highestScore) {
+                highestScore = temp->score;
+            }
+            if (temp->score < lowestScore) {
+                lowestScore = temp->score;
+            }
+            temp = temp->next;
+        }
+
+        cout << "Highest Score: " << highestScore << endl;
+        cout << "Lowest Score: " << lowestScore << endl;
+    }
+};
+
+// Main function
+int main() {
+    LinkedList list;
+    list.insertAtHead(100, 1);
+    list.insertAtHead(200, 2);
+    list.insertAtHead(300, 3);
+
+
+    list.insertAtEnd(400, 4);
+    list.insertAtEnd(500, 5);
+    cout << "Scores in forward order:" << endl;
+    list.printNode();
+    cout << "\nScores in reverse order:" << endl;
+    list.displayInReverse();
+    cout << "\nHighest and lowest scores:" << endl;
+    list.highestLowestScore();
+    list.deleteSameOccurrences(200);
+    cout << "\nScores after deleting nodes with score 200:" << endl;
+    list.printNode();
+
+    return 0;
+}
