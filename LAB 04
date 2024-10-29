@@ -1,307 +1,280 @@
-    #include<iostream>
-    #include<exception>
-    #include<string>
-    using namespace std;
-    // Forward declarations 
-  
+#include <iostream>
+#include <exception>
+#include <string>
+#include <limits>
 
-    class Node{
+using namespace std;
 
-    int data;
-    int priority;
+class Node {
+    string data;  
+    int priority;  
 
-    public:
+public:
     Node* next;
 
-    Node () {}
-    Node(int data , int priority){
+    Node() : next(nullptr) {}
+    Node(const string& data, int priority) {
         this->data = data;
-        next = NULL;
-        this-> priority = priority;
-
+        this->priority = priority;
+        this->next = nullptr;
     }
-    // Getter and setter
-    void setData(int data){
 
+  
+    void setData(const string& data) {
         this->data = data;
     }
-    int getData(){
+    string getData() const {
         return data;
     }
 
-    void setPriority(int priority){
-
+    void setPriority(int priority) {
         this->priority = priority;
-
     }
-    int getPriority(){
-        return  priority;
+    int getPriority() const {
+        return priority;
     }
+};
 
-    };
-      int searchData(Node* head, int data);
-    // push
-    void enqueue(Node* & head , int data , int priority){
-        // Cases 
-        
-        // Tracker
-        Node* forward = head;
 
-        Node* temp = new Node( data, priority);
+void enqueue(Node*& head, const string& data, int priority);
+Node* pop(Node* head);
+string peek(Node* head);
+bool isEmpty(Node* head);
+int getSize(Node* head);
+Node* clear(Node* head);
+int changeNodePriority(Node*& head, const string& data, int newPriority);
+int searchData(Node* head, const string& data);
+void printQueue(Node* head);
+int getUserChoice();
 
-    // No Node or Either 1 
-    if(head == NULL || head->getPriority() < priority){
-            temp->next = head;
-            head = temp;
-    } 
-        else {
-            // Multiple Node Handling 
-            // Iterating Until You find all with greater priorities 
+int main() {
+    Node* pq = nullptr;
+    int choice;
+    string data;
+    int priority;
 
-            while( forward -> next  != NULL && forward->next->getPriority() > priority ){
-                // Just keep going 
-                forward = forward->next;
-            }
+    do {
+        cout << "\nMenu:\n";
+        cout << "1. Enqueue\n";
+        cout << "2. Dequeue\n";
+        cout << "3. Peek\n";
+        cout << "4. Check if empty\n";
+        cout << "5. Get size\n";
+        cout << "6. Change node priority\n";
+        cout << "7. Print queue\n";
+        cout << "8. Clear queue\n";
+        cout << "0. Exit\n";
+        choice = getUserChoice();
 
-            // When you are out of the loop You Have found the element
-            temp->next = forward -> next;
-        forward->next = temp;
+        switch (choice) {
+            case 1: // Enqueue
+                cout << "Enter data (string): ";
+                cin >> data;
+                cout << "Enter priority: ";
+                while (!(cin >> priority)) {
+                    cin.clear(); 
+                    cin.ignore(numeric_limits<streamsize>::max(), '\n'); 
+                    cout << "Invalid input! Please enter a valid integer for priority: ";
+                }
+                enqueue(pq, data, priority);
+                cout << "Inserted " << data << " with priority " << priority << endl;
+                break;
+
+            case 2: 
+                if (isEmpty(pq)) {
+                    cout << "Queue is empty. Cannot dequeue." << endl;
+                } else {
+                    cout << "Dequeued: " << peek(pq) << endl;
+                    pq = pop(pq);
+                }
+                break;
+
+            case 3: 
+                if (isEmpty(pq)) {
+                    cout << "Queue is empty." << endl;
+                } else {
+                    cout << "Front element: " << peek(pq) << endl;
+                }
+                break;
+
+            case 4: 
+                cout << (isEmpty(pq) ? "Queue is empty." : "Queue is not empty.") << endl;
+                break;
+
+            case 5: // Get size
+                cout << "Queue size: " << getSize(pq) << endl;
+                break;
+
+            case 6: 
+                cout << "Enter the data of the node to change priority: ";
+                cin >> data;
+                cout << "Enter new priority: ";
+                while (!(cin >> priority)) {
+                    cin.clear(); 
+                    cin.ignore(numeric_limits<streamsize>::max(), '\n'); 
+                    cout << "Invalid input! Please enter a valid integer for priority: ";
+                }
+                if (changeNodePriority(pq, data, priority) == 1) {
+                    cout << "Priority updated successfully." << endl;
+                } else {
+                    cout << "Priority update failed. Node not found." << endl;
+                }
+                break;
+
+            case 7: 
+                cout << "Current queue: ";
+                printQueue(pq);
+                break;
+
+            case 8: // Clear queue
+                pq = clear(pq);
+                cout << "Queue cleared." << endl;
+                break;
+
+            case 0: // Exit
+                cout << "Exiting the program." << endl;
+                break;
+
+            default:
+                cout << "Invalid choice." << endl;
         }
+    } while (choice != 0);
 
+ 
+    pq = clear(pq);
+    return 0;
+}
+
+// Function Definitions
+void enqueue(Node*& head, const string& data, int priority) {
+    Node* temp = new Node(data, priority);
+
+   
+    if (head == nullptr || head->getPriority() < priority) {
+        temp->next = head;
+        head = temp;
+    } else {
+        Node* forward = head;
+        // Find the correct position for the new node
+        while (forward->next != nullptr && forward->next->getPriority() > priority) {
+            forward = forward->next;
+        }
+        temp->next = forward->next;
+        forward->next = temp;
     }
+}
 
-    // pop()
-    Node* pop(Node* head){
+Node* pop(Node* head) {
+    if (head == nullptr) return nullptr; // Check for empty queue
 
+    Node* temp = head;
+    head = head->next;
+    delete temp;
+    return head;
+}
+
+string peek(Node* head) {
+    if (head != nullptr) {
+        return head->getData();
+    }
+    return "Queue is empty.";
+}
+
+bool isEmpty(Node* head) {
+    return head == nullptr;
+}
+
+int getSize(Node* head) {
+    int size = 0;
+    while (head != nullptr) {
+        size++;
+        head = head->next;
+    }
+    return size;
+}
+
+Node* clear(Node* head) {
+    while (head != nullptr) {
         Node* temp = head;
         head = head->next;
         delete temp;
-        return head;
-
     }
+    return nullptr;
+}
 
-    // peek()
-    int peek(Node* head){
-
-        return head->getData();
-    }
-    // isEmpty()
-    bool isEmpty(Node* head) {
-        return head == NULL;
-    }
-    // size()
-    int getSize(Node* head){
-        int size = 0;
-        while(head ->next != NULL){
-            size++;
-            head = head->next;
-        }
-        return size;
-    }
-    // changePriority(
-    // clear()
-    Node* clear(Node* head){
-        // To Empty the Queue
-
-    while(head != NULL){
-        
-        Node* temp = head;
-            head = head-> next;
-            
-            delete temp;
-    }
-
-        return NULL;
-    }
-
-    // To Delete queue With Specific Priority 
-    // int deleteNode(Node* head, int priority,int data){
-        
-    //         int ans = searchData(head, data);
-    //         if(ans == data){
-    //             // You need to Iterate from the List first
-    //           Node* temp = 
-    //              // Remove that Node if Found 
-
-
-
-    //             // Ask for priority 
-    //             // Swap priority with new one 
-    //             // Re Merge it with the list according to the Priority 
-                
-    //         } 
-
-
-                
-            
-
-    //     // False return 
-
-
-    // }
-
-
-    // int ChangeeNodePriority(Node* head, int data , int NewPriority){
-    //     // Base Case 
-    //     if(head == NULL){
-    //         cout<< " Nothing khaali ha " << endl;
-    //         return -1;
-    //     }
-    //     if(head->getData() == data){
-
-    //         Node* current = head;
-    //         head = head -> next;
-    //         current -> next = NULL;
-
-    //         current->setPriority(NewPriority);
-    //         // Push it into the Queue Again (re merge krdo)
-    //         enqueue(head,current->getData(),NewPriority);
-    //     }
-
-    //         // If it isnt the first Node
-    //         // Traversing Through 
-    //         Node* current = head;
-    //        Node* temp  = NULL;
-
-    //         while(current->next != NULL && current -> getData() != data){
-    //                 temp = current;
-    //                 current = current -> next;
-    //         }
-    //         // You have matched the Data  and out of the loop 
-    //         if(current != NULL && current->getData()){
-    //             // Remove the NODE
-    //             temp -> next = current -> next;
-    //             current->next = NULL;
-
-    //             current->setPriority(NewPriority);
-
-    //             enqueue(head,current->getData(),NewPriority);
-    //             return 1;
-    //         }
-    //         return -1;
-
-    //     }
-    int ChangeeNodePriority(Node* &head, int data, int newPriority) {
-
-
-    if (head == NULL) {
+int changeNodePriority(Node*& head, const string& data, int newPriority) {
+    if (head == nullptr) {
         cout << "Queue is empty." << endl;
         return -1;
     }
-    //
-    Node *current = head;
-    // pREVIOUS POINTS TO THE PREVIOUS NODE OF CURRENT 
-    Node *prev = NULL;
 
-    while (current != NULL && current->getData() != data) {
+    Node* current = head;
+    Node* prev = nullptr;
 
+    // Search for the node by data
+    while (current != nullptr && current->getData() != data) {
         prev = current;
         current = current->next;
     }
 
-    // NODE NOT FOUND 
-    if (current == NULL) {
+    if (current == nullptr) {
         cout << "Node not found." << endl;
         return -1;
     }
-    // If you are here 
-    // Remove the node from the list
-    if (prev == NULL) {
-        // Node to be changed is the head
-        head = head->next;
+
+    // Remove the node from the queue
+    if (prev == nullptr) {
+        head = head->next; // Change head if the current node is the first
     } else {
-        prev->next = current->next;
+        prev->next = current->next; // Bypass the current node
     }
-    current->next = NULL; // Detach the node
+    current->next = nullptr; // Detach the node
 
-    // Change the priority
+    // Update the priority
     current->setPriority(newPriority);
-
-    // dubara merge krdo
-    enqueue(head, current->getData(), newPriority);
-
-    return 1; 
+    enqueue(head, current->getData(), newPriority); // Reinsert the node
+    return 1; // Success
 }
 
-
-    // Search From the list 
-        int searchData(Node* head, int data) {
-            if( head == NULL){
-                cout<< " Element Not Found "<< endl;
-                return -1;
-            }
-        if(head ->getData() == data){
-            return head->getData();
-        }
-        else{
-            // iterate krlo Yahan 
-            Node* temp = head;
-            while(temp != NULL){
-                if(temp->getData() == data){
-                    return temp->getData();
-                }   
-                temp = temp-> next;
-            }
-        }
-        cout<< " Element Not Found "<< endl;
+int searchData(Node* head, const string& data) {
+    if (head == nullptr) {
+        cout << "Element not found." << endl;
         return -1;
-        }
-
-    // Comaprision 
-
-
-
-
-    // printQueue() 
-    void printQueue(Node* head){
-
-        while(head != NULL)
-        {
-        Node* temp = head;
-        cout<< temp->getData()<<" ";
-        head = head-> next;
-        
-        }
-        cout<< endl;
     }
-
-
-
-
-
-    int main(){
-
-    Node* pq = NULL;
-
-        enqueue(pq, 4, 1);
-        enqueue(pq, 5, 2);
-        enqueue(pq, 6, 3);
-        enqueue(pq, 7, 0);
-
-        cout<< endl;
-        int ans = searchData(pq,11);
-       
-
-      
-         cout<< endl;
-
-         int change = ChangeeNodePriority(pq, 7, 4); // Change priority of node with data 7 to 4
-if (change == 1) {
-    cout << "Priority updated successfully." << endl;
-} else {
-    cout << "Priority update failed." << endl;
-}
-        // int change = ChangeeNodePriority(pq,7,0,4);
-        // cout<<change;
-
-        cout<< endl;
-          while (!isEmpty(pq)) {
-            cout << " " << peek(pq);
-            pq = pop(pq);
+    if (head->getData() == data) {
+        return 0; // Found at head
+    } else {
+        Node* temp = head;
+        while (temp != nullptr) {
+            if (temp->getData() == data) {
+                return 0; // Found in the list
+            }
+            temp = temp->next;
         }
-        return 0;
-    } 
+    }
+    cout << "Element not found." << endl;
+    return -1; // Not found
+}
 
+void printQueue(Node* head) {
+    if (isEmpty(head)) {
+        cout << "Queue is empty." << endl;
+        return;
+    }
+    while (head != nullptr) {
+        cout << head->getData() << " (Priority: " << head->getPriority() << ") ";
+        head = head->next;
+    }
+    cout << endl;
+}
 
-
-    
+int getUserChoice() {
+    int choice;
+    cout << "Enter your choice: ";
+    while (!(cin >> choice) || choice < 0 || choice > 8) {
+        cin.clear(); // Clear the error flag
+        cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Discard invalid input
+        cout << "Invalid choice! Please enter a number between 0 and 8: ";
+    }
+    return choice;
+}
