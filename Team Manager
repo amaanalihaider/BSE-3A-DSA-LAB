@@ -1,0 +1,226 @@
+#include <iostream>
+#include <fstream>
+#include <string>
+#include <limits> // For numeric_limits
+using namespace std;
+
+class Player {
+public:
+    string playerName;
+    int odiRuns;
+    int totalMatches;
+    int t20Runs;
+    int testRuns;
+    Player* nextPlayer;
+    Player* previousPlayer;
+
+    Player(string name, int odi, int matches, int t20, int test)
+        : playerName(name), odiRuns(odi), totalMatches(matches), t20Runs(t20), testRuns(test), nextPlayer(nullptr), previousPlayer(nullptr) {}
+};
+
+class CricketTeam {
+private:
+    Player* firstPlayer;
+    Player* lastPlayer;
+    int currentSize;
+    const int maxPlayersAllowed = 20;
+
+    bool doesPlayerExist(const string& name) {
+        Player* temp = firstPlayer;
+        while (temp) {
+            if (temp->playerName == name) return true;
+            temp = temp->nextPlayer;
+        }
+        return false;
+    }
+
+    void saveToFile(Player* player) {
+        ofstream outputFile(player->playerName + "_details.txt");
+        if (outputFile.is_open()) {
+            outputFile << "Player Name: " << player->playerName << "\n"
+                       << "ODI Runs: " << player->odiRuns << "\n"
+                       << "Total Matches: " << player->totalMatches << "\n"
+                       << "T20 Runs: " << player->t20Runs << "\n"
+                       << "Test Runs: " << player->testRuns << "\n";
+            outputFile.close();
+        } else {
+            cout << "\nError: Could not create file for player " << player->playerName << ".";
+        }
+    }
+
+    void removeFile(const string& name) {
+        string filename = name + "_details.txt";
+        if (remove(filename.c_str()) == 0) {
+            cout << "\nFile for player " << name << " deleted successfully.";
+        } else {
+            cout << "\nError: Unable to delete file for player " << name << ".";
+        }
+    }
+
+public:
+    CricketTeam() : firstPlayer(nullptr), lastPlayer(nullptr), currentSize(0) {}
+
+    void addNewPlayer(const string& name, int odi, int matches, int t20, int test) {
+        if (currentSize >= maxPlayersAllowed) {
+            cout << "\nThe team has reached the maximum number of players.";
+            return;
+        }
+        if (doesPlayerExist(name)) {
+            cout << "\nA player named " << name << " is already on the team.";
+            return;
+        }
+
+        Player* newEntry = new Player(name, odi, matches, t20, test);
+        if (!firstPlayer) {
+            firstPlayer = lastPlayer = newEntry;
+        } else {
+            lastPlayer->nextPlayer = newEntry;
+            newEntry->previousPlayer = lastPlayer;
+            lastPlayer = newEntry;
+        }
+
+        currentSize++;
+        saveToFile(newEntry);
+        cout << "\nPlayer " << name << " added to the team successfully.";
+    }
+
+    void deletePlayer(const string& name) {
+        if (!doesPlayerExist(name)) {
+            cout << "\nPlayer " << name << " does not exist in the team.";
+            return;
+        }
+
+        Player* temp = firstPlayer;
+        while (temp) {
+            if (temp->playerName == name) {
+                if (temp->previousPlayer) temp->previousPlayer->nextPlayer = temp->nextPlayer;
+                if (temp->nextPlayer) temp->nextPlayer->previousPlayer = temp->previousPlayer;
+
+                if (temp == firstPlayer) firstPlayer = temp->nextPlayer;
+                if (temp == lastPlayer) lastPlayer = temp->previousPlayer;
+
+                removeFile(name);
+                delete temp;
+                currentSize--;
+                cout << "\nPlayer " << name << " removed from the team.";
+                return;
+            }
+            temp = temp->nextPlayer;
+        }
+    }
+
+    void modifyPlayerStats(const string& name, int odi, int matches, int t20, int test) {
+        if (!doesPlayerExist(name)) {
+            cout << "\nNo player named " << name << " found.";
+            return;
+        }
+
+        Player* temp = firstPlayer;
+        while (temp) {
+            if (temp->playerName == name) {
+                temp->odiRuns = odi;
+                temp->totalMatches = matches;
+                temp->t20Runs = t20;
+                temp->testRuns = test;
+                saveToFile(temp);
+                cout << "\nPlayer stats updated for " << name << ".";
+                return;
+            }
+            temp = temp->nextPlayer;
+        }
+    }
+
+    ~CricketTeam() {
+        Player* temp = firstPlayer;
+        while (temp) {
+            Player* toDelete = temp;
+            temp = temp->nextPlayer;
+            delete toDelete;
+        }
+    }
+};
+
+// Helper function to validate integer input
+int getValidatedInt(const string& prompt) {
+    int value;
+    while (true) {
+        cout << prompt;
+        cin >> value;
+        if (cin.fail()) {
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            cout << "Invalid input. Please enter a valid integer.\n";
+        } else {
+            break;
+        }
+    }
+    return value;
+}
+
+// Helper function to validate non-empty string input
+string getValidatedString(const string& prompt) {
+    string value;
+    while (true) {
+        cout << prompt;
+        getline(cin >> ws, value);
+        if (value.empty()) {
+            cout << "Invalid input. Please enter a non-empty string.\n";
+        } else {
+            break;
+        }
+    }
+    return value;
+}
+
+int main() {
+    CricketTeam myTeam;
+    int option;
+
+    do {
+        cout << "\n--- Cricket Team Management Menu ---\n"
+             << "1. Add Player\n"
+             << "2. Remove Player\n"
+             << "3. Update Player\n"
+             << "4. Exit\n"
+             << "Select an option: ";
+        option = getValidatedInt("");
+
+        if (option == 4) {
+            cout << "\nExiting program...";
+            break;
+        }
+
+        string name;
+        int odi, matches, t20, test;
+
+        switch (option) {
+        case 1:
+            name = getValidatedString("Enter Player Name: ");
+            odi = getValidatedInt("ODI Runs: ");
+            matches = getValidatedInt("Total Matches: ");
+            t20 = getValidatedInt("T20 Runs: ");
+            test = getValidatedInt("Test Runs: ");
+            myTeam.addNewPlayer(name, odi, matches, t20, test);
+            break;
+
+        case 2:
+            name = getValidatedString("Enter Player Name to Remove: ");
+            myTeam.deletePlayer(name);
+            break;
+
+        case 3:
+            name = getValidatedString("Enter Player Name to Update: ");
+            odi = getValidatedInt("New ODI Runs: ");
+            matches = getValidatedInt("New Total Matches: ");
+            t20 = getValidatedInt("New T20 Runs: ");
+            test = getValidatedInt("New Test Runs: ");
+            myTeam.modifyPlayerStats(name, odi, matches, t20, test);
+            break;
+
+        default:
+            cout << "\nInvalid option! Try again.";
+        }
+    } while (true);
+
+    return 0;
+}
