@@ -1,174 +1,308 @@
-#include <iostream>
+#include<string>
 using namespace std;
 
-class Node {
+#include<iostream>
+class Node
+{
 public:
-    int score;
-    int match;
-    Node* next;
-    Node* previous;
-
-    // Constructor
-    Node(int score, int match) {
-        this->score = score;
-        this->match = match;
-        next = NULL;
-        previous = NULL;
-    }
+	Node* next, * previous;
+	double runs;
+	int matchNo;
+	Node(int matchNo,double run) : matchNo(matchNo) ,runs(run), next(NULL), previous(NULL) {}
 };
 
-class LinkedList {
+class DoublyLinkedList {
 public:
-    Node* head;
+	Node* head;
+	Node* tail;
+	DoublyLinkedList(): head(NULL), tail(NULL) {}
 
-    // Constructor for LinkedList
-    LinkedList() {
-        head = NULL;
-    }
+	Node* findMatch(int matchNo) {
+		Node* temp = head;
+		while (temp) {
+			if (temp->matchNo == matchNo) return temp;
+			temp = temp->next;
+		}
+		return NULL;
+	}
 
-    // Add Runs at Start: Insert the runs scored in a new match at the beginning of the list.
-    void insertAtHead(int score, int matchNumber) {
-        Node* temp = new Node(score, matchNumber);
+	void AddRunsAtStart(int matchNo ,int runs) {//1. Add Runs at Start
+		Node* existingMatch = findMatch(matchNo);
 
-        // Check if head exists
-        if (head == NULL) {
-            head = temp;
-        } else {
-            // Insert at head
-            temp->next = head;
-            head->previous = temp;
-            head = temp;
-        }
-    }
+		if (existingMatch) {
 
-    // Add Runs at the End: Insert the runs scored in a new match at the end of the list.
-    void insertAtEnd(int score, int matchNumber) {
-        Node* temp = new Node(score, matchNumber);
+			cout << "\n Match " << matchNo << " already exists. Updating score."
+				 << "\n Previous score : ";
 
-        // Check if list is empty
-        if (head == NULL) {
-            head = temp;
-        } else {
-            // Find the tail (last node)
-            Node* tail = head;
-            while (tail->next != NULL) {
-                tail = tail->next;
-            }
-            // Insert at end
-            tail->next = temp;
-            temp->previous = tail;
-        }
-    }
+			existingMatch->runs = runs;
 
-    // Deletion of Nodes with Same Score
-    void deleteSameOccurrences(int score) {
-        Node* current = head;
+			cout << "\n Updated score: " << existingMatch->runs;
 
-        // Traverse and delete nodes with matching score
-        while (current != NULL) {
-            if (current->score == score) {
-                if (current == head) {
-                    // Delete head node
-                    head = head->next;
-                    if (head) head->previous = NULL;
-                    delete current;
-                    current = head;
-                } else {
-                    // Delete non-head nodes
-                    Node* prev = current->previous;
-                    Node* next = current->next;
+			return;
+		}
 
-                    if (next) next->previous = prev;
-                    if (prev) prev->next = next;
+		Node* NewNode = new Node(matchNo, runs);
+		if (head==NULL) {
+			head = tail = NewNode;
+			return;
+		}
+		else {
+			NewNode->next = head;
+			head->previous = NewNode;
+			head = NewNode;
+			return;
+		}
+	}
+	void AddRunsAtEnd(int matchNo, int runs) {// 2.	Add Runs at End
+		Node* existingMatch = findMatch(matchNo);
 
-                    delete current;
-                    current = next;
-                }
-            } else {
-                current = current->next;
-            }
-        }
-    }
+		if (existingMatch) {
 
-    // Display Scores in Forward Order
-    void printNode() {
-        Node* current = head;
-        if (!current) {
-            cout << "Nothing to display." << endl;
-            return;
-        }
-        while (current != NULL) {
-            cout << "Match Number: " << current->match << ", Score: " << current->score << endl;
-            current = current->next;
-        }
-    }
+			cout << "\n Match " << matchNo << " already exists. Updating score."
+				<< "\n Previous score : ";
 
-    // Display Scores in Reverse Order
-    void displayInReverse() {
-        if (head == NULL) {
-            cout << "Nothing to display in reverse." << endl;
-            return;
-        }
+			existingMatch->runs = runs;
 
-        // Find the tail (last node)
-        Node* tail = head;
-        while (tail->next != NULL) {
-            tail = tail->next;
-        }
+			cout << "\n Updated score: " << existingMatch->runs;
 
-        // Traverse in reverse order
-        while (tail != NULL) {
-            cout << "Match Number: " << tail->match << ", Score: " << tail->score << endl;
-            tail = tail->previous;
-        }
-    }
+			return;
+		}
+		Node* NewNode = new Node(matchNo, runs);
+		if (!head) {
+			head = tail = NewNode;
+			return;
+		}
+		else {
+			tail->next = NewNode;
+			NewNode->previous = tail;
+			tail = NewNode;
+			return;
+		}
+	}
 
-    // Find and Display Highest and Lowest Scores
-    void highestLowestScore() {
-        if (head == NULL) {
-            cout << "No scores available." << endl;
-            return;
-        }
+	void DeleteAllOccurrencesOfaScore(int runs) {//	3.	Delete All Occurrences of a Score
 
-        int highestScore = head->score;
-        int lowestScore = head->score;
-        Node* temp = head;
 
-        // Traverse list to find highest and lowest scores
-        while (temp != NULL) {
-            if (temp->score > highestScore) {
-                highestScore = temp->score;
-            }
-            if (temp->score < lowestScore) {
-                lowestScore = temp->score;
-            }
-            temp = temp->next;
-        }
+		if (!head) {
+			cout << "\n No matches recorded yet.";
+			return;
+		}
+		Node* temp = head;
+		bool flag = false;
 
-        cout << "Highest Score: " << highestScore << endl;
-        cout << "Lowest Score: " << lowestScore << endl;
-    }
+		while (temp) {
+			if (temp->runs == runs) {
+				flag = true;
+				Node* toDelete = temp;
+				if (temp == head) {
+					head = head->next;
+					if (head) head->previous = nullptr;
+					else tail = nullptr;  
+				}
+				else if (temp == tail) {
+					tail = tail->previous;
+					tail->next = nullptr;
+				}
+				else {
+					temp->previous->next = temp->next;
+					temp->next->previous = temp->previous;
+				}
+				temp = temp->next;
+				delete toDelete;
+			}
+			else {
+				temp = temp->next;
+			}
+		}
+		if (!flag) {
+			cout << "\n Score not found in any match.";
+		}
+	}
+	void DisplayScoresInSequence() {// 4. Display Scores in Sequence
+		if (!head) {
+			cout << "\n No Nodees recorded yet.";
+			return;
+		}
+		else {
+			cout << endl;
+			Node* temp = head;
+			while (temp)
+			{
+				cout << " | " <<temp->matchNo<< "," << temp->runs << " |";
+				temp = temp->next;
+			}
+			return;
+		}
+	}
+
+	void DisplayScoresInReverseSequence() {// 5. Display Scores in  Reverse Sequence
+		if (!head) {
+			cout << "\n No Nodees recorded yet.";
+			return;
+		}
+		else {
+			cout << endl;
+			Node* temp = tail;
+			while (temp)
+			{
+				cout << " | " << temp->matchNo << "," << temp->runs << " |";
+				temp = temp->previous;
+			}
+			return;
+		}
+	}
+	void FindHighestAndLowestScores() {//6.	Find Highest and Lowest Scores: 
+		if (!head) {
+			cout << "\n No Nodees recorded yet.";
+			return;
+		}
+		else {
+			Node* biggest, * smallest;
+			biggest = smallest = head;
+
+			Node* temp = head;
+			while (temp) {
+				if (biggest->runs <=  temp->runs) {
+					biggest = temp;
+				}
+				if (smallest->runs >= temp->runs) {
+					smallest = temp;
+				}
+				temp = temp->next;
+			}
+			cout << "\n Highest score: " << biggest->runs;
+			cout << "\n Lowest score: " << smallest->runs;
+		}
+	}
 };
 
-// Main function
+
+
+bool isDigitString(string& str, int range = 9, int i = 0) {
+
+	while (i < str.size() && (str[i] == ' ' || str[i] == '0')) {
+		i++;
+	}
+
+
+	if (i >= str.size()) {
+		return false;
+	}
+
+
+	if (str[i] >= '1' && str[i] <= '0' + range) {
+		if (i == str.size() - 1) {
+			return true;
+		}
+		return isDigitString(str, range, i + 1);
+	}
+
+	return false;
+}
+
+void makeValid(string& str, int range) {
+	while (!isDigitString(str, range)) {
+		
+		cout << "\n Try Again! \n Enter digit 0 to " << range << " to continue: ";
+		str.clear();
+		cin >> str;
+	}
+
+	return;
+}
+
+void  menu() {
+	cout << "\n +================Menu===================+"
+		 << "\n | 1. Add Runs at Start.                 |"
+		 << "\n | 2. Add Runs at End.                   | "
+		 << "\n | 3. Delete All Occurrences of a Score. |" 
+		 << "\n | 4. Display Scores in Sequence.        |" 
+		 << "\n | 5. Display Scores in Reverse Sequence.| "
+		 << "\n | 6. Find Highest and Lowest Scores.    | "
+		 << "\n | 7.  Exit.                             | "    
+		 << "\n | Enter Your choice: ";
+}
+
+int takeRunsInput() {
+	int run;
+	  do
+	  {
+		  cin.clear();
+			
+			cout << "\n Enter runs: ";
+			  cin >> run;
+			  
+
+		  if (run < 0)
+		  {
+			  cout << "\n Invalid Input. Try Again!. ";
+		  }
+
+
+	  } while (run < 0);
+	  return run;
+}
+
+int takeMatchNumber() {
+	int num;
+	do
+	{
+		cin.clear();
+		cout << "\n Enter match number: ";
+		cin >> num;
+		if (num < 0) 
+		{
+			cout << "\n Invalid Input. Try Again!. ";
+		}
+		
+
+	} while (num < 0);
+	return num;
+}
+
 int main() {
-    LinkedList list;
-    list.insertAtHead(100, 1);
-    list.insertAtHead(200, 2);
-    list.insertAtHead(300, 3);
+	string choice;
+	DoublyLinkedList list;
+	bool first = 1;
+	do {
+		choice.clear();
+		if (first)
+		{
+			cin.ignore();
+			first = 0;
+		}
+		/system("CLS");/
+		
 
+		menu();
+		getline(cin, choice);
+		makeValid(choice, 7);
 
-    list.insertAtEnd(400, 4);
-    list.insertAtEnd(500, 5);
-    cout << "Scores in forward order:" << endl;
-    list.printNode();
-    cout << "\nScores in reverse order:" << endl;
-    list.displayInReverse();
-    cout << "\nHighest and lowest scores:" << endl;
-    list.highestLowestScore();
-    list.deleteSameOccurrences(200);
-    cout << "\nScores after deleting nodes with score 200:" << endl;
-    list.printNode();
+		switch (choice[0]) {
 
-    return 0;
+		case '1':
+			;
+			
+			list.AddRunsAtStart(takeMatchNumber(), takeRunsInput());
+			break;
+		case '2':
+			
+			list.AddRunsAtEnd(takeMatchNumber(), takeRunsInput());
+			break;
+		case '3':
+			
+			list.DeleteAllOccurrencesOfaScore(takeRunsInput());
+			break;
+		case '4':
+			list.DisplayScoresInSequence();
+			break;
+		case '5':
+			list.DisplayScoresInReverseSequence();
+			break;
+		case '6':
+			list.FindHighestAndLowestScores();
+			break;
+		}
+	} while (choice[0] != '7');
+	return 0;
 }
