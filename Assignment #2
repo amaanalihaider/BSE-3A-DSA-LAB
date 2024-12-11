@@ -1,6 +1,5 @@
 #include <iostream>
-#include <limits> // For numeric_limits
-#include <cmath>  // For pow()
+
 using namespace std;
 
 class Node {
@@ -9,7 +8,7 @@ public:
     int exponent;
     Node* next;
 
-    Node(int coeff, int exp) : coefficient(coeff), exponent(exp), next(nullptr) {}
+    Node(int coeff, int exp) : coefficient(coeff), exponent(exp), next(NULL) {}
 };
 
 class Polynomial {
@@ -18,32 +17,28 @@ private:
 
     void insertInOrder(int coeff, int exp) {
         Node* newNode = new Node(coeff, exp);
-
         if (!head || head->exponent < exp) {
             newNode->next = head;
             head = newNode;
-            return;
         }
-
-        Node* current = head;
-        Node* prev = nullptr;
-
-        while (current && current->exponent > exp) {
-            prev = current;
-            current = current->next;
-        }
-
-        if (current && current->exponent == exp) {
-            current->coefficient += coeff;
-            if (current->coefficient == 0) {
-                if (prev) prev->next = current->next;
-                else head = current->next;
-                delete current;
+        else {
+            Node* current = head;
+            while (current->next && current->next->exponent > exp) {
+                current = current->next;
             }
-            delete newNode;
-        } else {
-            if (prev) prev->next = newNode;
-            newNode->next = current;
+            if (current->next && current->next->exponent == exp) {
+                current->next->coefficient += coeff;
+                if (current->next->coefficient == 0) {
+                    Node* temp = current->next;
+                    current->next = current->next->next;
+                    delete temp;
+                }
+                delete newNode;
+            }
+            else {
+                newNode->next = current->next;
+                current->next = newNode;
+            }
         }
     }
 
@@ -59,21 +54,24 @@ public:
     }
 
     void insertTerm(int coeff, int exp) {
-        if (coeff != 0) insertInOrder(coeff, exp);
+        if (coeff != 0)
+            insertInOrder(coeff, exp);
     }
 
     void display() const {
+
         if (!head) {
-            cout << "0" << endl;
+            
+            cout << "   ";
             return;
         }
         Node* current = head;
         while (current) {
-            cout << (current->coefficient > 0 && current != head ? "+" : "")
-                 << current->coefficient << "x^" << current->exponent;
+            cout << "    "<<(current->coefficient > 0 && current != head ? "+" : "")
+                << current->coefficient << "x^" << current->exponent;
             current = current->next;
         }
-        cout << endl;
+        
     }
 
     Polynomial operator+(const Polynomial& other) const {
@@ -85,10 +83,12 @@ public:
             if (p1 && (!p2 || p1->exponent > p2->exponent)) {
                 result.insertTerm(p1->coefficient, p1->exponent);
                 p1 = p1->next;
-            } else if (p2 && (!p1 || p2->exponent > p1->exponent)) {
+            }
+            else if (p2 && (!p1 || p2->exponent > p1->exponent)) {
                 result.insertTerm(p2->coefficient, p2->exponent);
                 p2 = p2->next;
-            } else {
+            }
+            else {
                 result.insertTerm(p1->coefficient + p2->coefficient, p1->exponent);
                 p1 = p1->next;
                 p2 = p2->next;
@@ -106,10 +106,12 @@ public:
             if (p1 && (!p2 || p1->exponent > p2->exponent)) {
                 result.insertTerm(p1->coefficient, p1->exponent);
                 p1 = p1->next;
-            } else if (p2 && (!p1 || p2->exponent > p1->exponent)) {
+            }
+            else if (p2 && (!p1 || p2->exponent > p1->exponent)) {
                 result.insertTerm(-p2->coefficient, p2->exponent);
                 p2 = p2->next;
-            } else {
+            }
+            else {
                 result.insertTerm(p1->coefficient - p2->coefficient, p1->exponent);
                 p1 = p1->next;
                 p2 = p2->next;
@@ -130,43 +132,24 @@ public:
 
     int evaluate(int x) const {
         int result = 0;
-        Node* current = head;
-        while (current) {
+        for (Node* current = head; current; current = current->next) {
             result += current->coefficient * pow(x, current->exponent);
-            current = current->next;
         }
         return result;
     }
 };
 
-int getValidatedInt(const string& prompt) {
-    int value;
-    while (true) {
-        cout << prompt;
-        cin >> value;
-        if (cin.fail()) {
-            cin.clear();
-            cin.ignore(numeric_limits<streamsize>::max(), '\n');
-            cout << "Invalid input. Please enter an integer.\n";
-        } else {
-            break;
-        }
-    }
-    return value;
-}
 
-void inputPolynomial(Polynomial& poly, const string& polyName) {
-    int n = getValidatedInt("Enter the number of terms to add to " + polyName + ": ");
+void inputPolynomial(Polynomial& poly) {
+    int n;
+    cout << "\n Enter the number of terms in the polynomial: ";
+    cin >> n;
+
     for (int i = 0; i < n; ++i) {
-        cout << "\nCurrent state of " << polyName << ": ";
-        poly.display(); // Display polynomial before adding the term
-
-        int coeff = getValidatedInt("Enter coefficient for term " + to_string(i + 1) + ": ");
-        int exp = getValidatedInt("Enter exponent for term " + to_string(i + 1) + ": ");
+        int coeff, exp;
+        cout << "\n Enter coefficient and exponent for term " << i + 1 << " : ";
+        cin >> coeff >> exp;
         poly.insertTerm(coeff, exp);
-
-        cout << "\nUpdated " << polyName << ": ";
-        poly.display(); // Display polynomial after adding the term
     }
 }
 
@@ -175,83 +158,82 @@ void menu() {
     Polynomial p1, p2;
 
     while (true) {
-#ifdef _WIN32
-        system("CLS"); // Clear screen for Windows
-#else
-        system("clear"); // Clear screen for Unix-like systems
-#endif
-        cout << "\n--- Polynomial Operations Menu ---\n";
-        cout << "1. Add terms to Polynomial 1\n";
-        cout << "2. Add terms to Polynomial 2\n";
-        cout << "3. Display Polynomials\n";
-        cout << "4. Add Polynomials\n";
-        cout << "5. Subtract Polynomials\n";
-        cout << "6. Multiply Polynomials\n";
-        cout << "7. Evaluate a Polynomial\n";
-        cout << "8. Exit\n";
-
-        int choice = getValidatedInt("Enter your choice: ");
+        cout << "\n +--------------------Menu---------------------------";
+        cout << "\n |1. Add terms to Polynomial 1";  p1.display();
+        cout << "\n |2. Add terms to Polynomial 2"; p2.display();
+        cout << "\n |3. Display Polynomials";
+        cout << "\n |4. Add Polynomials";
+        cout << "\n |5. Subtract Polynomials";
+        cout << "\n |6. Multiply Polynomials";
+        cout << "\n |7. Evaluate a Polynomial";
+        cout << "\n |8. Exit\n";
+        cout << "\n |Enter your choice: ";
+        int choice;
+        cin >> choice;
 
         switch (choice) {
         case 1:
-            cout << "\nAdding terms to Polynomial 1:\n";
-            inputPolynomial(p1, "Polynomial 1");
+            cout << "\n Adding terms to Polynomial 1:\n";
+            inputPolynomial(p1);
             break;
         case 2:
-            cout << "\nAdding terms to Polynomial 2:\n";
-            inputPolynomial(p2, "Polynomial 2");
+            cout << "\n Adding terms to Polynomial 2:\n";
+            inputPolynomial(p2);
             break;
         case 3:
-            cout << "\nPolynomial 1: ";
+            cout << "\n Polynomial 1: ";
             p1.display();
-            cout << "Polynomial 2: ";
+            cout << "\n Polynomial 2: ";
             p2.display();
             break;
         case 4: {
             Polynomial sum = p1 + p2;
-            cout << "\nSum: ";
+            cout << "\n Sum: ";
             sum.display();
             break;
         }
         case 5: {
             Polynomial diff = p1 - p2;
-            cout << "\nDifference: ";
+            cout << "\n Difference: ";
             diff.display();
             break;
         }
         case 6: {
             Polynomial prod = p1 * p2;
-            cout << "\nProduct: ";
+            cout << "\n Product: ";
             prod.display();
             break;
         }
         case 7: {
-            int polyChoice = getValidatedInt("Evaluate which polynomial (1 or 2)? ");
-            int x = getValidatedInt("Enter the value of x: ");
+            int polyChoice, x;
+            cout << "\n Evaluate which polynomial (1 or 2) ? ";
+            cin >> polyChoice;
+            cout << "\n Enter the value of x: ";
+            cin >> x;
             if (polyChoice == 1)
-                cout << "Result: " << p1.evaluate(x) << endl;
+                cout << "\n Polynomial 1 evaluated at x = " << x << ": " << p1.evaluate(x) << endl;
             else if (polyChoice == 2)
-                cout << "Result: " << p2.evaluate(x) << endl;
+                cout << "\n Polynomial 2 evaluated at x = " << x << ": " << p2.evaluate(x) << endl;
             else
-                cout << "Invalid choice.\n";
+                cout << "\n Invalid choice.";
             break;
         }
         case 8:
-            cout << "Exiting program.\n";
+            cout << "\n Exiting the program.";
             return;
         default:
-            cout << "Invalid choice. Please try again.\n";
+            cout << "\n Invalid choice. Try again.";
         }
-
-        cout << "\nPress Enter to return to the menu...";
-        cin.ignore(numeric_limits<streamsize>::max(), '\n');
-        cin.get(); // Wait for user input
     }
 }
 
-
-
 int main() {
+    string choice;
+    do {
+
     menu();
+    cout << "\n Do you to continue (press y): ";
+    cin >> choice;
+    } while (choice == "Yes" || choice == "yes" || choice == "y" || choice == "Y"  );
     return 0;
 }
